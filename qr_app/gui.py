@@ -4,7 +4,7 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
-from .generator import QRCodeOptions, generate_qr_code
+from .generator import build_qr_options, generate_qr_code
 
 
 class QRCodeApp(tk.Tk):
@@ -129,14 +129,13 @@ class QRCodeApp(tk.Tk):
     def _generate(self) -> None:
         data = self.data_text.get("1.0", "end").strip()
         output_path = Path(self.output_var.get().strip() or "output/qr-code.png")
-        options = QRCodeOptions(
-            box_size=self.box_size_var.get(),
-            border=self.border_var.get(),
-            fill_color=self.fill_var.get().strip() or "black",
-            back_color=self.back_var.get().strip() or "white",
-        )
-
         try:
+            options = build_qr_options(
+                box_size=self.box_size_var.get(),
+                border=self.border_var.get(),
+                fill_color=self.fill_var.get(),
+                back_color=self.back_var.get(),
+            )
             result = generate_qr_code(data, output_path, options)
         except ValueError as error:
             self.status_var.set(str(error))

@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .generator import QRCodeOptions, generate_qr_code
+from .generator import build_qr_options, generate_qr_code
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -29,14 +29,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    options = QRCodeOptions(
-        box_size=args.box_size,
-        border=args.border,
-        fill_color=args.fill,
-        back_color=args.back,
-    )
-
     try:
+        options = build_qr_options(
+            box_size=args.box_size,
+            border=args.border,
+            fill_color=args.fill,
+            back_color=args.back,
+        )
         output_path = generate_qr_code(args.data, Path(args.output), options)
     except ValueError as error:
         parser.error(str(error))

@@ -15,16 +15,37 @@ class QRCodeOptions:
     back_color: str = "white"
 
 
+def build_qr_options(
+    box_size: int,
+    border: int,
+    fill_color: str = "black",
+    back_color: str = "white",
+) -> QRCodeOptions:
+    if box_size <= 0:
+        raise ValueError("Box size must be greater than zero.")
+    if border < 0:
+        raise ValueError("Border cannot be negative.")
+
+    return QRCodeOptions(
+        box_size=box_size,
+        border=border,
+        fill_color=fill_color.strip() or "black",
+        back_color=back_color.strip() or "white",
+    )
+
+
 def generate_qr_code(data: str, output_path: Path, options: QRCodeOptions | None = None) -> Path:
     clean_data = data.strip()
     if not clean_data:
         raise ValueError("QR data cannot be empty.")
 
     options = options or QRCodeOptions()
-    if options.box_size <= 0:
-        raise ValueError("Box size must be greater than zero.")
-    if options.border < 0:
-        raise ValueError("Border cannot be negative.")
+    options = build_qr_options(
+        box_size=options.box_size,
+        border=options.border,
+        fill_color=options.fill_color,
+        back_color=options.back_color,
+    )
 
     qr = qrcode.QRCode(
         version=None,
