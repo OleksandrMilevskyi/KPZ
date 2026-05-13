@@ -15,7 +15,7 @@ class QRCodeApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title("QR Code Generator")
-        self.geometry("760x640")
+        self.geometry("960x760")
         self.minsize(680, 560)
         self.preview_image: ImageTk.PhotoImage | None = None
         self.last_output_path: Path | None = None
@@ -83,7 +83,7 @@ class QRCodeApp(tk.Tk):
         )
 
         settings_group = ttk.LabelFrame(root, text="Style", padding=16)
-        settings_group.grid(row=6, column=0, sticky="ew", pady=(16, 0))
+        settings_group.grid(row=7, column=0, sticky="ew", pady=(16, 0))
         settings_group.columnconfigure(1, weight=1)
         settings_group.columnconfigure(3, weight=1)
 
@@ -125,7 +125,7 @@ class QRCodeApp(tk.Tk):
         )
 
         actions = ttk.Frame(root)
-        actions.grid(row=7, column=0, sticky="ew", pady=(20, 0))
+        actions.grid(row=6, column=0, sticky="ew", pady=(14, 0))
         actions.columnconfigure(0, weight=1)
 
         self.status_var = tk.StringVar(value="Ready")
