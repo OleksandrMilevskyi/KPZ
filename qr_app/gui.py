@@ -4,7 +4,9 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
-from .generator import build_qr_options, generate_qr_code
+from PIL import Image, ImageTk
+
+from .generator import build_qr_options, create_qr_image
 
 
 class QRCodeApp(tk.Tk):
@@ -13,6 +15,7 @@ class QRCodeApp(tk.Tk):
         self.title("QR Code Generator")
         self.geometry("760x640")
         self.minsize(680, 560)
+        self.preview_image: ImageTk.PhotoImage | None = None
 
         self._configure_theme()
         self._build_layout()
@@ -48,8 +51,14 @@ class QRCodeApp(tk.Tk):
         self.data_text = tk.Text(input_group, height=6, wrap="word")
         self.data_text.grid(row=1, column=0, sticky="ew", pady=(6, 0))
 
+        preview_group = ttk.LabelFrame(root, text="Preview", padding=16)
+        preview_group.grid(row=3, column=0, sticky="ew", pady=(16, 0))
+        preview_group.columnconfigure(0, weight=1)
+        self.preview_label = ttk.Label(preview_group, text="QR preview will appear here.", anchor="center")
+        self.preview_label.grid(row=0, column=0, sticky="ew")
+
         output_group = ttk.LabelFrame(root, text="Output", padding=16)
-        output_group.grid(row=3, column=0, sticky="ew", pady=(16, 0))
+        output_group.grid(row=4, column=0, sticky="ew", pady=(16, 0))
         output_group.columnconfigure(1, weight=1)
 
         ttk.Label(output_group, text="File").grid(row=0, column=0, sticky="w")
@@ -64,7 +73,7 @@ class QRCodeApp(tk.Tk):
         )
 
         settings_group = ttk.LabelFrame(root, text="Style", padding=16)
-        settings_group.grid(row=4, column=0, sticky="ew", pady=(16, 0))
+        settings_group.grid(row=5, column=0, sticky="ew", pady=(16, 0))
         settings_group.columnconfigure(1, weight=1)
         settings_group.columnconfigure(3, weight=1)
 
@@ -106,7 +115,7 @@ class QRCodeApp(tk.Tk):
         )
 
         actions = ttk.Frame(root)
-        actions.grid(row=5, column=0, sticky="ew", pady=(20, 0))
+        actions.grid(row=6, column=0, sticky="ew", pady=(20, 0))
         actions.columnconfigure(0, weight=1)
 
         self.status_var = tk.StringVar(value="Ready")
@@ -136,7 +145,9 @@ class QRCodeApp(tk.Tk):
                 fill_color=self.fill_var.get(),
                 back_color=self.back_var.get(),
             )
-            result = generate_qr_code(data, output_path, options)
+            image = create_qr_image(data, options)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            image.save(output_path)
         except ValueError as error:
             self.status_var.set(str(error))
             messagebox.showerror("Cannot generate QR code", str(error))
@@ -146,8 +157,16 @@ class QRCodeApp(tk.Tk):
             messagebox.showerror("Cannot save QR code", str(error))
             return
 
+        result = output_path.resolve()
+        self._show_preview(image)
         self.status_var.set(f"Saved to {result}")
         messagebox.showinfo("QR code generated", f"Saved to:\n{result}")
+
+    def _show_preview(self, image: Image.Image) -> None:
+        preview = image.convert("RGB")
+        preview.thumbnail((220, 220))
+        self.preview_image = ImageTk.PhotoImage(preview)
+        self.preview_label.configure(image=self.preview_image, text="")
 
 
 def run_gui() -> None:

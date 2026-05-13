@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from qr_app.generator import QRCodeOptions, build_qr_options, generate_qr_code
+from qr_app.generator import QRCodeOptions, build_qr_options, create_qr_image, generate_qr_code
 
 
 def test_generate_qr_code_creates_png(tmp_path: Path) -> None:
@@ -13,6 +13,13 @@ def test_generate_qr_code_creates_png(tmp_path: Path) -> None:
     assert result == output_path.resolve()
     assert output_path.exists()
     assert output_path.read_bytes().startswith(b"\x89PNG")
+
+
+def test_create_qr_image_returns_image_object() -> None:
+    image = create_qr_image("preview")
+
+    assert image.size[0] > 0
+    assert image.size[1] > 0
 
 
 def test_generate_qr_code_rejects_empty_data(tmp_path: Path) -> None:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import qrcode
 from qrcode.constants import ERROR_CORRECT_M
@@ -35,6 +36,13 @@ def build_qr_options(
 
 
 def generate_qr_code(data: str, output_path: Path, options: QRCodeOptions | None = None) -> Path:
+    image = create_qr_image(data, options)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    image.save(output_path)
+    return output_path.resolve()
+
+
+def create_qr_image(data: str, options: QRCodeOptions | None = None) -> Any:
     clean_data = data.strip()
     if not clean_data:
         raise ValueError("QR data cannot be empty.")
@@ -56,7 +64,4 @@ def generate_qr_code(data: str, output_path: Path, options: QRCodeOptions | None
     qr.add_data(clean_data)
     qr.make(fit=True)
 
-    image = qr.make_image(fill_color=options.fill_color, back_color=options.back_color)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(output_path)
-    return output_path.resolve()
+    return qr.make_image(fill_color=options.fill_color, back_color=options.back_color)
