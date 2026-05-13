@@ -1,7 +1,7 @@
 # QR Code Generator
 
 QR Code Generator is a Python application for creating QR codes from text or links.
-The project contains both a command-line interface and a graphical interface built with `tkinter`.
+The project contains both a command-line interface and a graphical desktop interface built with `tkinter`.
 
 ## Project Goal
 
@@ -28,23 +28,35 @@ The goal of the project is to demonstrate a complete small Python application wi
 - open the output folder from the GUI;
 - validate empty input and invalid style options.
 
+## Project View
+
+The screenshots below show the graphical interface before and after QR code generation.
+
+| Application window | Generated QR code |
+| --- | --- |
+| <img src="img.png" alt="QR Code Generator main window" width="420"> | <img src="img_1.png" alt="Generated QR code preview" width="420"> |
+
+The generated QR code can be scanned with a phone camera to verify that the encoded link works correctly.
+
 ## Project Structure
 
 ```text
 KPZ/
-├── qr_app/
-│   ├── __init__.py
-│   ├── __main__.py
-│   ├── cli.py
-│   ├── generator.py
-│   ├── gui.py
-│   └── history.py
-├── tests/
-│   ├── test_generator.py
-│   └── test_history.py
-├── .gitignore
-├── README.md
-└── requirements.txt
+|-- qr_app/
+|   |-- __init__.py
+|   |-- __main__.py
+|   |-- cli.py
+|   |-- generator.py
+|   |-- gui.py
+|   `-- history.py
+|-- tests/
+|   |-- test_generator.py
+|   `-- test_history.py
+|-- .gitignore
+|-- README.md
+|-- img.png
+|-- img_1.png
+`-- requirements.txt
 ```
 
 Main files:
@@ -76,7 +88,7 @@ Add python.exe to PATH
 
 ## Installation
 
-Open PowerShell in the project folder:
+Open PowerShell or Command Prompt in the project folder:
 
 ```powershell
 cd E:\University\Task\KPZ
@@ -88,16 +100,29 @@ Create a virtual environment:
 python -m venv .venv
 ```
 
+If `python` is not available but Python is installed in a known folder, use the full path:
+
+```powershell
+"C:\Users\Oleg2\AppData\Local\Programs\Python\Python312\python.exe" -m venv .venv
+```
+
 Activate the virtual environment:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
+For Command Prompt, use:
+
+```cmd
+.\.venv\Scripts\activate
+```
+
 Install dependencies:
 
 ```powershell
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 The project uses:
@@ -115,12 +140,14 @@ python -m qr_app --gui
 
 In the GUI:
 
-1. Enter text or a URL.
-2. Choose the output PNG file.
-3. Change QR style options if needed.
-4. Click `Generate`.
-5. Check the preview and recent QR history.
-6. Use `Open folder` to open the folder with generated files.
+1. Enter text or a URL in `Text or link`.
+2. Choose the output PNG file in `File`, or keep the default path.
+3. Click `Generate`.
+4. Check the QR preview and recent QR history.
+5. Use `Open folder` to open the folder with generated files.
+6. Change `Box size`, `Border`, `Fill color`, or `Background` if a custom style is needed.
+
+The GUI supports vertical scrolling, so all controls remain reachable on smaller screens.
 
 ## Running From Command Line
 
@@ -196,7 +223,10 @@ Current development history contains commits for:
 7. history storage;
 8. history display in GUI;
 9. output folder shortcut;
-10. merge of the history feature.
+10. merge of the history feature;
+11. expanded setup documentation;
+12. visible GUI action buttons;
+13. scrollable GUI layout and polished README screenshots.
 
 ## Notes
 

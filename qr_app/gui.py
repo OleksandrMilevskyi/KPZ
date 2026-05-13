@@ -37,9 +37,25 @@ class QRCodeApp(tk.Tk):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-        root = ttk.Frame(self, padding=24)
-        root.grid(row=0, column=0, sticky="nsew")
+        canvas = tk.Canvas(self, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+
+        root = ttk.Frame(canvas, padding=24)
         root.columnconfigure(0, weight=1)
+        canvas_window = canvas.create_window((0, 0), window=root, anchor="nw")
+
+        root.bind(
+            "<Configure>",
+            lambda event: canvas.configure(scrollregion=canvas.bbox("all")),
+        )
+        canvas.bind(
+            "<Configure>",
+            lambda event: canvas.itemconfigure(canvas_window, width=event.width),
+        )
+        canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-event.delta // 120, "units"))
 
         title = ttk.Label(root, text="QR Code Generator", style="Title.TLabel")
         title.grid(row=0, column=0, sticky="w")
