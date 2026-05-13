@@ -26,6 +26,12 @@ Generate a QR code:
 python -m qr_app "https://example.com"
 ```
 
+Start the graphical interface:
+
+```powershell
+python -m qr_app --gui
+```
+
 Save with a custom filename:
 
 ```powershell
