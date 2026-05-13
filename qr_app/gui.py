@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
@@ -17,6 +18,7 @@ class QRCodeApp(tk.Tk):
         self.geometry("760x640")
         self.minsize(680, 560)
         self.preview_image: ImageTk.PhotoImage | None = None
+        self.last_output_path: Path | None = None
 
         self._configure_theme()
         self._build_layout()
@@ -128,9 +130,11 @@ class QRCodeApp(tk.Tk):
 
         self.status_var = tk.StringVar(value="Ready")
         ttk.Label(actions, textvariable=self.status_var, style="Hint.TLabel").grid(row=0, column=0, sticky="w")
+        self.open_folder_button = ttk.Button(actions, text="Open folder", command=self._open_output_folder)
+        self.open_folder_button.grid(row=0, column=1, sticky="e", padx=(0, 10))
         ttk.Button(actions, text="Generate", style="Accent.TButton", command=self._generate).grid(
             row=0,
-            column=1,
+            column=2,
             sticky="e",
         )
 
@@ -166,6 +170,7 @@ class QRCodeApp(tk.Tk):
             return
 
         result = output_path.resolve()
+        self.last_output_path = result
         self._show_preview(image)
         self._refresh_history(add_history_entry(data, result))
         self.status_var.set(f"Saved to {result}")
@@ -186,6 +191,12 @@ class QRCodeApp(tk.Tk):
 
         for entry in entries:
             self.history_list.insert(tk.END, f"{entry.created_at} - {entry.data} -> {entry.output_path}")
+
+    def _open_output_folder(self) -> None:
+        target_path = self.last_output_path or Path(self.output_var.get().strip() or "output")
+        folder = target_path if target_path.is_dir() else target_path.parent
+        folder.mkdir(parents=True, exist_ok=True)
+        os.startfile(folder.resolve())
 
 
 def run_gui() -> None:
