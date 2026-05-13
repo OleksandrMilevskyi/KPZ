@@ -32,6 +32,13 @@ Start the graphical interface:
 python -m qr_app --gui
 ```
 
+The graphical interface supports:
+
+- entering long text or a URL;
+- choosing the output PNG file;
+- changing QR size and border;
+- setting foreground and background colors.
+
 Save with a custom filename:
 
 ```powershell
