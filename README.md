@@ -28,6 +28,13 @@ Project topic: **QR code generator with GUI, file saving, style settings, previe
 - preview the generated QR code in the GUI;
 - store the latest generated QR codes in `output/history.json`;
 - open the output folder from the GUI;
+- generate many QR codes from `.txt` or `.csv` batch files;
+- use built-in QR templates for Wi-Fi, email, SMS, phone, geo links, and vCard contacts;
+- export generation history to CSV, JSON, Markdown, or HTML;
+- create an HTML project report;
+- create backups of application data files;
+- run diagnostics for local environment checks;
+- search and filter saved history entries;
 - validate empty input and invalid style options.
 
 ## Project View
@@ -82,6 +89,13 @@ The application consists of several separate parts, where each file has a clear 
 | QR preview | Shows the generated QR code inside the GUI after successful generation. | [`qr_app/gui.py`](qr_app/gui.py) |
 | Data persistence | Saves the latest generated QR codes into a JSON history file. | [`qr_app/history.py`](qr_app/history.py) |
 | Recent history | Displays the latest generated QR codes in the GUI. | [`qr_app/gui.py`](qr_app/gui.py), [`qr_app/history.py`](qr_app/history.py) |
+| Batch generation | Generates many QR codes from text or CSV input files. | [`qr_app/batch.py`](qr_app/batch.py) |
+| Style profiles | Provides reusable QR style presets. | [`qr_app/profiles.py`](qr_app/profiles.py) |
+| QR templates | Builds QR content for Wi-Fi, email, SMS, phone, geo, and vCard data. | [`qr_app/templates.py`](qr_app/templates.py) |
+| History export | Exports saved history to CSV, JSON, Markdown, or HTML. | [`qr_app/exporters.py`](qr_app/exporters.py) |
+| Reports | Builds an HTML report with history and generated file information. | [`qr_app/reports.py`](qr_app/reports.py) |
+| Diagnostics | Checks Python, dependencies, required files, and output directory access. | [`qr_app/diagnostics.py`](qr_app/diagnostics.py) |
+| Backup | Archives app data files such as history, profiles, settings, and audit log. | [`qr_app/backup.py`](qr_app/backup.py) |
 | Automated tests | Checks generation, validation, image creation, and history storage behavior. | [`tests/test_generator.py`](tests/test_generator.py), [`tests/test_history.py`](tests/test_history.py) |
 
 The project satisfies the UI requirement through the `tkinter` desktop interface and the data storage requirement through `output/history.json`.
@@ -190,6 +204,36 @@ python -m qr_app "https://example.com" --output output/site.png --box-size 12 --
 
 Generated files are saved as PNG images. The default output folder is `output/`.
 
+Generate many QR codes from a text file:
+
+```powershell
+python -m qr_app batch input.txt --output-dir output/batch
+```
+
+Generate a phone QR code from a template:
+
+```powershell
+python -m qr_app template phone phone=+380000000000 --output output/phone.png
+```
+
+Export generation history:
+
+```powershell
+python -m qr_app export-history output/history.md
+```
+
+Create an HTML report:
+
+```powershell
+python -m qr_app report --output output/report.html
+```
+
+Run diagnostics:
+
+```powershell
+python -m qr_app diagnostics
+```
+
 ## Running Tests
 
 Run all tests:
@@ -201,7 +245,7 @@ python -m pytest
 Expected result:
 
 ```text
-9 passed
+96 passed
 ```
 
 The tests check:
@@ -212,6 +256,30 @@ The tests check:
 - QR image creation;
 - history saving and loading;
 - broken history file handling.
+- batch generation;
+- CLI commands;
+- templates;
+- export formats;
+- settings;
+- diagnostics;
+- backups;
+- reports.
+
+## Code Size
+
+The project contains at least 2000 lines in Python code and test files.
+
+PowerShell command used for checking:
+
+```powershell
+$total = 0; Get-ChildItem qr_app,tests -Recurse -Filter *.py | ForEach-Object { $total += (Get-Content $_.FullName | Measure-Object -Line).Lines }; "$total total lines in qr_app and tests"
+```
+
+Current result:
+
+```text
+2000 total lines in qr_app and tests
+```
 
 ## Programming Principles
 
@@ -321,7 +389,8 @@ Current development history contains commits for:
 10. merge of the history feature;
 11. expanded setup documentation;
 12. visible GUI action buttons;
-13. scrollable GUI layout and polished README screenshots.
+13. scrollable GUI layout and polished README screenshots;
+14. advanced QR tools, batch generation, templates, diagnostics, backups, and extended tests.
 
 ## Notes
 
