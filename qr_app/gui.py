@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
 import tkinter as tk
-from tkinter import ttk
+from tkinter import filedialog, messagebox, ttk
+
+from .generator import QRCodeOptions, generate_qr_code
 
 
 class QRCodeApp(tk.Tk):
@@ -43,6 +46,12 @@ class QRCodeApp(tk.Tk):
         self.output_var = tk.StringVar(value="output/qr-code.png")
         output_entry = ttk.Entry(output_group, textvariable=self.output_var)
         output_entry.grid(row=0, column=1, sticky="ew", padx=(10, 0))
+        ttk.Button(output_group, text="Browse", command=self._choose_output_file).grid(
+            row=0,
+            column=2,
+            sticky="e",
+            padx=(10, 0),
+        )
 
         actions = ttk.Frame(root)
         actions.grid(row=4, column=0, sticky="ew", pady=(20, 0))
@@ -50,7 +59,34 @@ class QRCodeApp(tk.Tk):
 
         self.status_var = tk.StringVar(value="Ready")
         ttk.Label(actions, textvariable=self.status_var).grid(row=0, column=0, sticky="w")
-        ttk.Button(actions, text="Generate").grid(row=0, column=1, sticky="e")
+        ttk.Button(actions, text="Generate", command=self._generate).grid(row=0, column=1, sticky="e")
+
+    def _choose_output_file(self) -> None:
+        filename = filedialog.asksaveasfilename(
+            title="Save QR code",
+            defaultextension=".png",
+            filetypes=[("PNG image", "*.png"), ("All files", "*.*")],
+        )
+        if filename:
+            self.output_var.set(filename)
+
+    def _generate(self) -> None:
+        data = self.data_text.get("1.0", "end").strip()
+        output_path = Path(self.output_var.get().strip() or "output/qr-code.png")
+
+        try:
+            result = generate_qr_code(data, output_path, QRCodeOptions())
+        except ValueError as error:
+            self.status_var.set(str(error))
+            messagebox.showerror("Cannot generate QR code", str(error))
+            return
+        except OSError as error:
+            self.status_var.set("Failed to save QR code.")
+            messagebox.showerror("Cannot save QR code", str(error))
+            return
+
+        self.status_var.set(f"Saved to {result}")
+        messagebox.showinfo("QR code generated", f"Saved to:\n{result}")
 
 
 def run_gui() -> None:
