@@ -36,6 +36,7 @@ The graphical interface supports:
 
 - entering long text or a URL;
 - choosing the output PNG file;
+- viewing recent generated QR codes;
 - changing QR size and border;
 - setting foreground and background colors.
 
