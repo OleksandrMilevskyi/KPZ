@@ -7,6 +7,8 @@ from typing import Any
 import qrcode
 from qrcode.constants import ERROR_CORRECT_M
 
+from .validators import normalize_color, normalize_qr_data, validate_border, validate_box_size
+
 
 @dataclass(frozen=True)
 class QRCodeOptions:
@@ -22,16 +24,11 @@ def build_qr_options(
     fill_color: str = "black",
     back_color: str = "white",
 ) -> QRCodeOptions:
-    if box_size <= 0:
-        raise ValueError("Box size must be greater than zero.")
-    if border < 0:
-        raise ValueError("Border cannot be negative.")
-
     return QRCodeOptions(
-        box_size=box_size,
-        border=border,
-        fill_color=fill_color.strip() or "black",
-        back_color=back_color.strip() or "white",
+        box_size=validate_box_size(box_size),
+        border=validate_border(border),
+        fill_color=normalize_color(fill_color, "black"),
+        back_color=normalize_color(back_color, "white"),
     )
 
 
@@ -43,9 +40,7 @@ def generate_qr_code(data: str, output_path: Path, options: QRCodeOptions | None
 
 
 def create_qr_image(data: str, options: QRCodeOptions | None = None) -> Any:
-    clean_data = data.strip()
-    if not clean_data:
-        raise ValueError("QR data cannot be empty.")
+    clean_data = normalize_qr_data(data)
 
     options = options or QRCodeOptions()
     options = build_qr_options(
